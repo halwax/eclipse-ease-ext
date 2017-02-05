@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?><target name="Neon" sequenceNumber="1478770240">
+<locations>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.platform.feature.group" version="4.6.1.v20160907-1200"/>
+<unit id="org.eclipse.rcp.feature.group" version="4.6.1.v20160907-1200"/>
+<unit id="org.eclipse.jdt.feature.group" version="3.12.1.v20160907-1200"/>
+<unit id="org.eclipse.equinox.p2.discovery.feature.feature.group" version="1.0.401.v20160901-1335"/>
+<unit id="org.eclipse.wst.jsdt.feature.feature.group" version="2.0.0.v201608301904"/>
+<unit id="org.eclipse.emf.feature.group" version="2.12.0.v20160526-0356"/>
+<unit id="org.eclipse.pde.feature.group" version="3.12.1.v20160907-1200"/>
+<unit id="org.eclipse.jdt" version="3.12.1.v20160907-1200"/>
+<repository location="http://download.eclipse.org/releases/neon/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.ease.ui.feature.feature.group" version="0.4.0.I201701130652"/>
+<unit id="org.eclipse.ease.lang.javascript.feature.feature.group" version="0.4.0.I201611211504"/>
+<unit id="org.eclipse.ease.feature.feature.group" version="0.4.0.I201611181551"/>
+<unit id="org.eclipse.ease.modules.feature.source.feature.group" version="0.4.0.I201610120928"/>
+<unit id="org.eclipse.ease.feature.source.feature.group" version="0.4.0.I201611181551"/>
+<unit id="org.eclipse.ease.ui.feature.source.feature.group" version="0.4.0.I201701130652"/>
+<unit id="org.eclipse.ease.modules.feature.feature.group" version="0.4.0.I201610120928"/>
+<repository location="http://download.eclipse.org/ease/update/release"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.tigris.subversion.subclipse.feature.group" version="4.2.2.201612131538"/>
+<repository location="https://dl.bintray.com/subclipse/releases/subclipse/4.2.x/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+<unit id="org.hamcrest" version="1.1.0.v20090501071000"/>
+<unit id="org.codehaus.jackson.core" version="1.6.0.v20101005-0925"/>
+<unit id="org.mockito" version="1.9.5.v201605172210"/>
+<unit id="com.fasterxml.jackson.jaxrs.jackson-jaxrs-json-provider" version="2.5.0.v201504171603"/>
+<unit id="org.codehaus.jackson.core.source" version="1.6.0.v20101005-0925"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/"/>
+</location>
+</locations>
+</target>

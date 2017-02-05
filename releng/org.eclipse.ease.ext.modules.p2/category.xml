@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipse.ease.ext.modules.ide.feature_0.0.1.qualifier.jar" id="org.eclipse.ease.ext.modules.ide.feature" version="0.0.1.qualifier">
+      <category name="EASE Extension Modules"/>
+   </feature>
+   <feature url="features/org.eclipse.ease.ext.modules.jdt.feature_0.0.1.qualifier.jar" id="org.eclipse.ease.ext.modules.jdt.feature" version="0.0.1.qualifier">
+      <category name="EASE Extension Modules"/>
+   </feature>
+   <feature url="features/org.eclipse.ease.ext.modules.pde.feature_0.0.1.qualifier.jar" id="org.eclipse.ease.ext.modules.pde.feature" version="0.0.1.qualifier">
+      <category name="EASE Extension Modules"/>
+   </feature>
+   <feature url="features/org.eclipse.ease.ext.modules.subclipse.feature_0.0.1.qualifier.jar" id="org.eclipse.ease.ext.modules.subclipse.feature" version="0.0.1.qualifier">
+      <category name="EASE Extension Modules"/>
+   </feature>
+   <category-def name="EASE Extension Modules" label="EASE Extensions"/>
+</site>

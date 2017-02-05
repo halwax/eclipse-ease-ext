@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ease JDT Modules
+Bundle-SymbolicName: org.eclipse.ease.ext.modules.jdt;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.ease.ext.modules.ide;visibility:=reexport,
+ org.eclipse.jdt.core;visibility:=reexport,
+ org.eclipse.jdt.launching;visibility:=reexport,
+ org.eclipse.jdt.ui;visibility:=reexport
+Export-Package: org.eclipse.ease.ext.modules.jdt
