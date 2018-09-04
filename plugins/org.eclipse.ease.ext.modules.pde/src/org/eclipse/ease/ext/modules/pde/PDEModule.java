@@ -9,8 +9,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ease.IScriptEngine;
 import org.eclipse.ease.ext.modules.ide.IDEModule;
 import org.eclipse.ease.modules.AbstractScriptModule;
+import org.eclipse.ease.modules.IEnvironment;
 import org.eclipse.ease.modules.WrapToScript;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
@@ -20,6 +22,12 @@ import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 public class PDEModule extends AbstractScriptModule {
 	
 	private IDEModule ideModule = new IDEModule();
+	
+	@Override
+	public void initialize(IScriptEngine engine, IEnvironment environment) {
+		super.initialize(engine, environment);
+		ideModule.initialize(engine, environment);
+	}
 	
 	@WrapToScript
 	public Optional<Job> tryInitLoadDefaultTargetPlatformJob(final Object resourceObj) {

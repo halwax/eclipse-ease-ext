@@ -7,7 +7,7 @@
             category="org.eclipse.ease.category.system"
             class="org.eclipse.ease.ext.modules.subclipse.SubclipseModule"
             id="org.eclipse.ease.ext.modules.subclipse"
-            name="org.eclipse.ease.ext.modules.subclipse"
+            name="Subclipse"
             visible="true">
       </module>
    </extension>

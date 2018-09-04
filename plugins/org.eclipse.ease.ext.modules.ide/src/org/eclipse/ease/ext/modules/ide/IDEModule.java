@@ -212,11 +212,11 @@ public class IDEModule extends AbstractScriptModule {
 	@WrapToScript
 	public Optional<IResource> findResource(Object resourceObj) {
 		IResource resource = null;
-		Object file = ResourceTools.resolveFile(resourceObj, getScriptEngine().getExecutedFile(), true);
+		Object file = ResourceTools.resolve(resourceObj, getScriptEngine().getExecutedFile());
 		if (file instanceof IResource) {
-			resource = (IResource) resourceObj;
+			resource = (IResource) file;
 		} else {
-			Object folder = ResourceTools.resolveFolder(resourceObj, getScriptEngine().getExecutedFile(), true);
+			Object folder = ResourceTools.resolve(resourceObj, getScriptEngine().getExecutedFile());
 			if (folder instanceof IContainer) {
 				resource = (IResource) folder;
 			}

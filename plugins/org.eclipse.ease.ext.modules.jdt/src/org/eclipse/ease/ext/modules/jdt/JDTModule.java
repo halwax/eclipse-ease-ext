@@ -16,8 +16,10 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.ease.IScriptEngine;
 import org.eclipse.ease.ext.modules.ide.IDEModule;
 import org.eclipse.ease.modules.AbstractScriptModule;
+import org.eclipse.ease.modules.IEnvironment;
 import org.eclipse.ease.modules.WrapToScript;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -61,8 +63,15 @@ public class JDTModule extends AbstractScriptModule {
 		public ProfileStore newProfileStore(IProfileVersioner profileVersioner);
 
 	}
-
+	
 	private IDEModule ideModule = new IDEModule();
+	
+	@Override
+	public void initialize(IScriptEngine engine, IEnvironment environment) {
+		super.initialize(engine, environment);
+		ideModule.initialize(engine, environment);
+	}
+
 
 	@WrapToScript
 	public void setJavaVersion(String javaVersion) {
