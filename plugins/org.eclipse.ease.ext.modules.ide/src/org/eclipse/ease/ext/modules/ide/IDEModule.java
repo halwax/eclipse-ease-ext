@@ -39,189 +39,194 @@ import org.osgi.framework.FrameworkUtil;
 @SuppressWarnings("restriction")
 public class IDEModule extends AbstractScriptModule {
 
-	@SuppressWarnings("unchecked")
-	@WrapToScript
-	public <T> Optional<T> tryLoadService(Class<T> clazz) {
-		return Optional.of((T) PlatformModule.getService(clazz));
-	}
-	
-	@WrapToScript
-	public Job initCleanWorkspaceJob() {
+    @SuppressWarnings("unchecked")
+    @WrapToScript
+    public <T> Optional<T> tryLoadService(final Class<T> clazz) {
+        return Optional.of((T) PlatformModule.getService(clazz));
+    }
 
-		WorkspaceJob job = new WorkspaceJob("Refresh and clean workspace") {
+    @WrapToScript
+    public Job initCleanWorkspaceJob() {
 
-			@Override
-			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+        WorkspaceJob job = new WorkspaceJob("Refresh and clean workspace") {
 
-				enableAutoBuild(false);
+            @Override
+            public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
 
-				for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-					if (project.exists() && project.isOpen()) {
-						project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-					}
-				}
+                enableAutoBuild(false);
 
-				enableAutoBuild(true);
+                for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+                    if (project.exists() && project.isOpen()) {
+                        project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+                    }
+                }
 
-				ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+                enableAutoBuild(true);
 
-				return Status.OK_STATUS;
-			}
-		};
-		return job;
-	}
+                ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
 
-	@WrapToScript
-	public IWorkingSet initWorkingSet(String workingSetName, String workingSetId) {
-		IWorkingSetManager workingSetManager = getWorkingSetManager();
-		IWorkingSet workingSet = workingSetManager.getWorkingSet(workingSetName);
-		if (workingSet == null) {
-			workingSet = workingSetManager.createWorkingSet(workingSetName, new IAdaptable[] {});
-			workingSet.setId(workingSetId);
-			workingSetManager.addWorkingSet(workingSet);
-		}
-		return workingSet;
-	}
+                return Status.OK_STATUS;
+            }
+        };
+        return job;
+    }
 
-	@WrapToScript
-	public boolean enableAutoBuild(boolean enable) throws CoreException {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IWorkspaceDescription description = workspace.getDescription();
-		boolean autoBuilding = description.isAutoBuilding();
-		if (autoBuilding != enable) {
-			description.setAutoBuilding(autoBuilding);
-			workspace.setDescription(description);
-		}
-		return autoBuilding;
-	}
+    @WrapToScript
+    public IWorkingSet initWorkingSet(final String workingSetName, final String workingSetId) {
+        IWorkingSetManager workingSetManager = getWorkingSetManager();
+        IWorkingSet workingSet = workingSetManager.getWorkingSet(workingSetName);
+        if (workingSet == null) {
+            workingSet = workingSetManager.createWorkingSet(workingSetName, new IAdaptable[] {});
+            workingSet.setId(workingSetId);
+            workingSetManager.addWorkingSet(workingSet);
+        }
+        return workingSet;
+    }
 
-	@WrapToScript
-	public IWorkingSetManager getWorkingSetManager() {
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		return workbench.getWorkingSetManager();
-	}
+    @WrapToScript
+    public boolean enableAutoBuild(final boolean enable) throws CoreException {
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        IWorkspaceDescription description = workspace.getDescription();
+        boolean autoBuilding = description.isAutoBuilding();
+        if (autoBuilding != enable) {
+            description.setAutoBuilding(autoBuilding);
+            workspace.setDescription(description);
+        }
+        return autoBuilding;
+    }
 
-	@WrapToScript
-	public File toFile(final Object resourceObj) throws FileNotFoundException {
-		return findFile(resourceObj).orElseThrow(
-				() -> new FileNotFoundException(String.format("Can't resolve %s to a file!", resourceObj)));
-	}
+    @WrapToScript
+    public IWorkingSetManager getWorkingSetManager() {
+        IWorkbench workbench = PlatformUI.getWorkbench();
+        return workbench.getWorkingSetManager();
+    }
 
-	@WrapToScript
-	public IResource toResource(Object resourceObj) {
-		return findResource(resourceObj).orElseThrow(
-				() -> new IllegalArgumentException(String.format("Can't resolve %s to a resource!", resourceObj)));
-	}
+    @WrapToScript
+    public File toFile(final Object resourceObj) throws FileNotFoundException {
 
-	@WrapToScript
-	public Optional<File> findFile(Object resourceObj) {
-		IResource resource = toResource(resourceObj);
-		if (resource == null && resourceObj instanceof String) {
-			File file = new File((String) resourceObj);
-			return Optional.of(file);
-		} else if (resource == null) {
-			return Optional.empty();
-		}
-		IPath location = resource.getLocation();
-		return Optional.ofNullable(location.toFile());
-	}
+        if (resourceObj instanceof File) {
+            return (File) resourceObj;
+        }
 
-	@WrapToScript
-	public Optional<Job> tryInitLinkImportProjectJob(final String projectName, Object resourceObj)
-			throws CoreException, FileNotFoundException {
+        return findFile(resourceObj).orElseThrow(
+                () -> new FileNotFoundException(String.format("Can't resolve %s to a file!", resourceObj)));
+    }
 
-		File projectFolder = toFile(resourceObj);
+    @WrapToScript
+    public IResource toResource(final Object resourceObj) {
+        return findResource(resourceObj).orElseThrow(
+                () -> new IllegalArgumentException(String.format("Can't resolve %s to a resource!", resourceObj)));
+    }
 
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		if (workspace.getRoot().getProject(projectName).exists()) {
-			return Optional.empty();
-		}
+    @WrapToScript
+    public Optional<File> findFile(final Object resourceObj) {
+        Object resolvedResourceObj = findResource(resourceObj).map(resource -> (Object) resource).orElseGet(() -> ResourceTools.resolve(resourceObj));
+        if (resolvedResourceObj instanceof File) {
+            return Optional.of((File) resolvedResourceObj);
+        } else if (resolvedResourceObj instanceof IResource) {
+            IResource resource = (IResource) resolvedResourceObj;
+            IPath location = resource.getLocation();
+            return Optional.ofNullable(location.toFile());
+        }
+        return Optional.empty();
+    }
 
-		File projectConfigFile = new File(projectFolder, ".project");
-		if (!projectConfigFile.exists()) {
-			return Optional.empty();
-		}
+    @WrapToScript
+    public Optional<Job> tryInitLinkImportProjectJob(final String projectName, final Object resourceObj)
+            throws CoreException, FileNotFoundException {
 
-		final IProjectDescription projectDescription = workspace
-				.loadProjectDescription(Path.fromOSString(projectConfigFile.getAbsolutePath()));
+        File projectFolder = toFile(resourceObj);
 
-		WorkspaceJob job = new WorkspaceJob("Link Import project " + projectName) {
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        if (workspace.getRoot().getProject(projectName).exists()) {
+            return Optional.empty();
+        }
 
-			@Override
-			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-				IProject project = workspace.getRoot().getProject(projectName);
-				project.create(projectDescription, monitor);
-				project.open(monitor);
-				return Status.OK_STATUS;
-			}
-		};
+        File projectConfigFile = new File(projectFolder, ".project");
+        if (!projectConfigFile.exists()) {
+            return Optional.empty();
+        }
 
-		return Optional.of(job);
-	}
+        final IProjectDescription projectDescription = workspace
+                .loadProjectDescription(Path.fromOSString(projectConfigFile.getAbsolutePath()));
 
-	@WrapToScript
-	public Optional<Job> tryInitCopyImportProjectJob(final String projectName, Object resourceObj, boolean overwrite)
-			throws CoreException, FileNotFoundException {
+        WorkspaceJob job = new WorkspaceJob("Link Import project " + projectName) {
 
-		final File projectFolder = toFile(resourceObj);
+            @Override
+            public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
+                IProject project = workspace.getRoot().getProject(projectName);
+                project.create(projectDescription, monitor);
+                project.open(monitor);
+                return Status.OK_STATUS;
+            }
+        };
 
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IProject project = workspace.getRoot().getProject(projectName);
+        return Optional.of(job);
+    }
 
-		if (project.exists() && !overwrite) {
-			return Optional.empty();
-		}
+    @WrapToScript
+    public Optional<Job> tryInitCopyImportProjectJob(final String projectName, final Object resourceObj, final boolean overwrite)
+            throws CoreException, FileNotFoundException {
 
-		final IOverwriteQuery overwriteQuery = new IOverwriteQuery() {
+        final File projectFolder = toFile(resourceObj);
 
-			@Override
-			public String queryOverwrite(String pathString) {
-				return ALL;
-			}
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        IProject project = workspace.getRoot().getProject(projectName);
 
-		};
+        if (project.exists() && !overwrite) {
+            return Optional.empty();
+        }
 
-		WorkspaceJob job = new WorkspaceJob("Copy Import project " + projectName) {
+        final IOverwriteQuery overwriteQuery = new IOverwriteQuery() {
 
-			@Override
-			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-				FileSystemStructureProvider fileSystemStructureProvider = new FileSystemStructureProvider();
-				ImportOperation importOperation = new ImportOperation(project.getFullPath(), projectFolder,
-						fileSystemStructureProvider, overwriteQuery);
-				importOperation.setCreateContainerStructure(false);
-				try {
-					importOperation.run(monitor);
-				} catch (InvocationTargetException | InterruptedException e) {
-					if (e.getCause() instanceof CoreException) {
-						return ((CoreException) e.getCause()).getStatus();
-					}
-					Bundle bundle = FrameworkUtil.getBundle(IDEModule.class);
-					return new Status(IStatus.ERROR, bundle.getSymbolicName(), 2, e.getCause().getLocalizedMessage(),
-							e);
-				}
-				return importOperation.getStatus();
-			}
+            @Override
+            public String queryOverwrite(final String pathString) {
+                return ALL;
+            }
 
-		};
+        };
 
-		job.schedule();
+        WorkspaceJob job = new WorkspaceJob("Copy Import project " + projectName) {
 
-		return Optional.of(job);
-	}
-	
-	@WrapToScript
-	public Optional<IResource> findResource(Object resourceObj) {
-		IResource resource = null;
-		Object file = ResourceTools.resolve(resourceObj, getScriptEngine().getExecutedFile());
-		if (file instanceof IResource) {
-			resource = (IResource) file;
-		} else {
-			Object folder = ResourceTools.resolve(resourceObj, getScriptEngine().getExecutedFile());
-			if (folder instanceof IContainer) {
-				resource = (IResource) folder;
-			}
-		}
-		return Optional.ofNullable(resource);
-	}
+            @Override
+            public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
+                FileSystemStructureProvider fileSystemStructureProvider = new FileSystemStructureProvider();
+                ImportOperation importOperation = new ImportOperation(project.getFullPath(), projectFolder,
+                        fileSystemStructureProvider, overwriteQuery);
+                importOperation.setCreateContainerStructure(false);
+                try {
+                    importOperation.run(monitor);
+                } catch (InvocationTargetException | InterruptedException e) {
+                    if (e.getCause() instanceof CoreException) {
+                        return ((CoreException) e.getCause()).getStatus();
+                    }
+                    Bundle bundle = FrameworkUtil.getBundle(IDEModule.class);
+                    return new Status(IStatus.ERROR, bundle.getSymbolicName(), 2, e.getCause().getLocalizedMessage(),
+                            e);
+                }
+                return importOperation.getStatus();
+            }
+
+        };
+
+        job.schedule();
+
+        return Optional.of(job);
+    }
+
+    @WrapToScript
+    public Optional<IResource> findResource(final Object resourceObj) {
+        IResource resource = null;
+        Object file = ResourceTools.resolve(resourceObj, getScriptEngine().getExecutedFile());
+        if (file instanceof IResource) {
+            resource = (IResource) file;
+        } else {
+            Object folder = ResourceTools.resolve(resourceObj, getScriptEngine().getExecutedFile());
+            if (folder instanceof IContainer) {
+                resource = (IResource) folder;
+            }
+        }
+        return Optional.ofNullable(resource);
+    }
 
 }

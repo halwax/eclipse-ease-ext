@@ -53,256 +53,255 @@ import org.eclipse.ui.IWorkingSet;
 @SuppressWarnings("restriction")
 public class JDTModule extends AbstractScriptModule {
 
-	private interface ProfileSetup {
+    private interface ProfileSetup {
 
-		public IProfileVersioner newProfileVersioner();
+        public IProfileVersioner newProfileVersioner();
 
-		public ProfileManager newProfileManager(List<Profile> profiles, IScopeContext instance,
-				PreferencesAccess originalPreferences, IProfileVersioner profileVersioner);
+        public ProfileManager newProfileManager(List<Profile> profiles, IScopeContext instance,
+                PreferencesAccess originalPreferences, IProfileVersioner profileVersioner);
 
-		public ProfileStore newProfileStore(IProfileVersioner profileVersioner);
+        public ProfileStore newProfileStore(IProfileVersioner profileVersioner);
 
-	}
-	
-	private IDEModule ideModule = new IDEModule();
-	
-	@Override
-	public void initialize(IScriptEngine engine, IEnvironment environment) {
-		super.initialize(engine, environment);
-		ideModule.initialize(engine, environment);
-	}
+    }
 
+    private final IDEModule ideModule = new IDEModule();
 
-	@WrapToScript
-	public void setJavaVersion(String javaVersion) {
-		IEclipsePreferences nodeCore = InstanceScope.INSTANCE.getNode(JavaCore.PLUGIN_ID);
-		if (nodeCore != null) {
-			nodeCore.put("org.eclipse.jdt.core.compiler.source", javaVersion);
-			nodeCore.put("org.eclipse.jdt.core.compiler.codegen.targetPlatform", javaVersion);
-			nodeCore.put("org.eclipse.jdt.core.compiler.compliance", javaVersion);
-		}
-	}
+    @Override
+    public void initialize(final IScriptEngine engine, final IEnvironment environment) {
+        super.initialize(engine, environment);
+        ideModule.initialize(engine, environment);
+    }
 
-	@WrapToScript
-	public void setDefaultJRE(Object resourceObj) throws CoreException, FileNotFoundException {
+    @WrapToScript
+    public void setJavaVersion(final String javaVersion) {
+        IEclipsePreferences nodeCore = InstanceScope.INSTANCE.getNode(JavaCore.PLUGIN_ID);
+        if (nodeCore != null) {
+            nodeCore.put("org.eclipse.jdt.core.compiler.source", javaVersion);
+            nodeCore.put("org.eclipse.jdt.core.compiler.codegen.targetPlatform", javaVersion);
+            nodeCore.put("org.eclipse.jdt.core.compiler.compliance", javaVersion);
+        }
+    }
 
-		File installationLocation = ideModule.toFile(resourceObj);
+    @WrapToScript
+    public void setDefaultJRE(final Object resourceObj) throws CoreException, FileNotFoundException {
 
-		VMStandin vmStandin = null;
-		List<VMStandin> standins = new ArrayList<>();
-		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
-		for (int i = 0; i < types.length; i++) {
-			IVMInstallType type = types[i];
-			IVMInstall[] vmInstalls = type.getVMInstalls();
-			for (int j = 0; j < vmInstalls.length; j++) {
-				IVMInstall install = vmInstalls[j];
-				standins.add(new VMStandin(install));
-				if (install.getInstallLocation().equals(installationLocation)) {
-					vmStandin = new VMStandin(install);
-				}
-			}
-		}
-		if (vmStandin == null) {
-			vmStandin = toVMStandin(installationLocation);
-		}
+        File installationLocation = ideModule.toFile(resourceObj);
 
-		saveVMs(standins, vmStandin);
-	}
+        VMStandin vmStandin = null;
+        List<VMStandin> standins = new ArrayList<>();
+        IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
+        for (IVMInstallType type : types) {
+            IVMInstall[] vmInstalls = type.getVMInstalls();
+            for (IVMInstall install : vmInstalls) {
+                standins.add(new VMStandin(install));
+                if (install.getInstallLocation().equals(installationLocation)) {
+                    vmStandin = new VMStandin(install);
+                }
+            }
+        }
+        if (vmStandin == null) {
+            vmStandin = toVMStandin(installationLocation);
+            standins.add(vmStandin);
+        }
 
-	@WrapToScript
-	public Map<String, String> exportSaveActions() {
-		return new HashMap<>(CleanUpPreferenceUtil.loadSaveParticipantOptions(InstanceScope.INSTANCE));
-	}
+        saveVMs(standins, vmStandin);
+    }
 
-	@WrapToScript
-	public void importSaveActions(Map<String, String> saveActions) {
+    @WrapToScript
+    public Map<String, String> exportSaveActions() {
+        return new HashMap<>(CleanUpPreferenceUtil.loadSaveParticipantOptions(InstanceScope.INSTANCE));
+    }
 
-		CleanUpRegistry cleanUpRegistry = JavaPlugin.getDefault().getCleanUpRegistry();
-		Map<String, String> optionsMap = cleanUpRegistry.getDefaultOptions(CleanUpConstants.DEFAULT_SAVE_ACTION_OPTIONS)
-				.getMap();
-		optionsMap.putAll(saveActions);
-		CleanUpPreferenceUtil.saveSaveParticipantOptions(InstanceScope.INSTANCE, optionsMap);
+    @WrapToScript
+    public void importSaveActions(final Map<String, String> saveActions) {
 
-		IScopeContext scope = PreferencesAccess.getOriginalPreferences().getInstanceScope();
-		scope.getNode(JavaUI.ID_PLUGIN)
-				.putBoolean(AbstractSaveParticipantPreferenceConfiguration.EDITOR_SAVE_PARTICIPANT_PREFIX
-						+ CleanUpPostSaveListener.POSTSAVELISTENER_ID, true);
-	}
+        CleanUpRegistry cleanUpRegistry = JavaPlugin.getDefault().getCleanUpRegistry();
+        Map<String, String> optionsMap = cleanUpRegistry.getDefaultOptions(CleanUpConstants.DEFAULT_SAVE_ACTION_OPTIONS)
+                .getMap();
+        optionsMap.putAll(saveActions);
+        CleanUpPreferenceUtil.saveSaveParticipantOptions(InstanceScope.INSTANCE, optionsMap);
 
-	@WrapToScript
-	public void importJavaCleanup(Object resourceObj) throws CoreException, FileNotFoundException {
+        IScopeContext scope = PreferencesAccess.getOriginalPreferences().getInstanceScope();
+        scope.getNode(JavaUI.ID_PLUGIN)
+                .putBoolean(AbstractSaveParticipantPreferenceConfiguration.EDITOR_SAVE_PARTICIPANT_PREFIX
+                        + CleanUpPostSaveListener.POSTSAVELISTENER_ID, true);
+    }
 
-		File file = ideModule.toFile(resourceObj);
+    @WrapToScript
+    public void importJavaCleanup(final Object resourceObj) throws CoreException, FileNotFoundException {
 
-		importJdtProfiles(file, new ProfileSetup() {
+        File file = ideModule.toFile(resourceObj);
 
-			@Override
-			public IProfileVersioner newProfileVersioner() {
-				return new CleanUpProfileVersioner();
-			}
+        importJdtProfiles(file, new ProfileSetup() {
 
-			@Override
-			public ProfileManager newProfileManager(List<Profile> profiles, IScopeContext instance,
-					PreferencesAccess originalPreferences, IProfileVersioner profileVersioner) {
-				return new CleanUpProfileManager(profiles, instance, originalPreferences, profileVersioner);
-			}
+            @Override
+            public IProfileVersioner newProfileVersioner() {
+                return new CleanUpProfileVersioner();
+            }
 
-			@Override
-			public ProfileStore newProfileStore(IProfileVersioner profileVersioner) {
-				return new ProfileStore(CleanUpConstants.CLEANUP_PROFILES, profileVersioner);
-			}
-		});
-	}
+            @Override
+            public ProfileManager newProfileManager(final List<Profile> profiles, final IScopeContext instance,
+                    final PreferencesAccess originalPreferences, final IProfileVersioner profileVersioner) {
+                return new CleanUpProfileManager(profiles, instance, originalPreferences, profileVersioner);
+            }
 
-	@WrapToScript
-	public void importJavaFormatter(Object resourceObj) throws CoreException, FileNotFoundException {
+            @Override
+            public ProfileStore newProfileStore(final IProfileVersioner profileVersioner) {
+                return new ProfileStore(CleanUpConstants.CLEANUP_PROFILES, profileVersioner);
+            }
+        });
+    }
 
-		File file = ideModule.toFile(resourceObj);
+    @WrapToScript
+    public void importJavaFormatter(final Object resourceObj) throws CoreException, FileNotFoundException {
 
-		importJdtProfiles(file, new ProfileSetup() {
+        File file = ideModule.toFile(resourceObj);
 
-			@Override
-			public IProfileVersioner newProfileVersioner() {
-				return new ProfileVersioner();
-			}
+        importJdtProfiles(file, new ProfileSetup() {
 
-			@Override
-			public ProfileManager newProfileManager(List<Profile> profiles, IScopeContext context,
-					PreferencesAccess originalPreferences, IProfileVersioner profileVersioner) {
-				return new FormatterProfileManager(profiles, context, originalPreferences, profileVersioner);
-			}
+            @Override
+            public IProfileVersioner newProfileVersioner() {
+                return new ProfileVersioner();
+            }
 
-			@Override
-			public ProfileStore newProfileStore(IProfileVersioner profileVersioner) {
-				return new FormatterProfileStore(profileVersioner);
-			}
-		});
-	}
+            @Override
+            public ProfileManager newProfileManager(final List<Profile> profiles, final IScopeContext context,
+                    final PreferencesAccess originalPreferences, final IProfileVersioner profileVersioner) {
+                return new FormatterProfileManager(profiles, context, originalPreferences, profileVersioner);
+            }
 
-	@WrapToScript
-	public IWorkingSet initJavaWorkingSet(String workingSetName) {
-		return ideModule.initWorkingSet(workingSetName, "org.eclipse.jdt.ui.JavaWorkingSetPage");
-	}
+            @Override
+            public ProfileStore newProfileStore(final IProfileVersioner profileVersioner) {
+                return new FormatterProfileStore(profileVersioner);
+            }
+        });
+    }
 
-	@WrapToScript
-	public boolean addJavaProjectToWorkingSet(IWorkingSet workingSet, IProject project) throws CoreException {
-		Optional<IJavaProject> javaProjectOpt = tryGetJavaProject(project);
-		if (javaProjectOpt.isPresent()) {
-			IJavaProject javaProject = javaProjectOpt.get();
-			List<IAdaptable> elements = new ArrayList<>();
-			elements.addAll(Arrays.asList(workingSet.getElements()));
-			elements.addAll(Arrays.asList(workingSet.adaptElements(new IAdaptable[] { javaProject })));
-			workingSet.setElements(elements.toArray(new IAdaptable[elements.size()]));
-			return true;
-		}
-		return false;
-	}
+    @WrapToScript
+    public IWorkingSet initJavaWorkingSet(final String workingSetName) {
+        return ideModule.initWorkingSet(workingSetName, "org.eclipse.jdt.ui.JavaWorkingSetPage");
+    }
 
-	@WrapToScript
-	public boolean removeJavaProjectFromWorkingSet(IWorkingSet workingSet, IProject project) throws CoreException {
+    @WrapToScript
+    public boolean addJavaProjectToWorkingSet(final IWorkingSet workingSet, final IProject project) throws CoreException {
+        Optional<IJavaProject> javaProjectOpt = tryGetJavaProject(project);
+        if (javaProjectOpt.isPresent()) {
+            IJavaProject javaProject = javaProjectOpt.get();
+            List<IAdaptable> elements = new ArrayList<>();
+            elements.addAll(Arrays.asList(workingSet.getElements()));
+            elements.addAll(Arrays.asList(workingSet.adaptElements(new IAdaptable[] { javaProject })));
+            workingSet.setElements(elements.toArray(new IAdaptable[elements.size()]));
+            return true;
+        }
+        return false;
+    }
 
-		Optional<IJavaProject> javaProjectOpt = tryGetJavaProject(project);
-		if (javaProjectOpt.isPresent()) {
-			IJavaProject javaProject = javaProjectOpt.get();
-			List<IAdaptable> elements = new ArrayList<>();
-			elements.addAll(Arrays.asList(workingSet.getElements()));
-			boolean removed = elements.remove(javaProject);
-			if (removed) {
-				workingSet.setElements(elements.toArray(new IAdaptable[elements.size()]));
-			}
-			return removed;
-		}
+    @WrapToScript
+    public boolean removeJavaProjectFromWorkingSet(final IWorkingSet workingSet, final IProject project) throws CoreException {
 
-		return false;
-	}
+        Optional<IJavaProject> javaProjectOpt = tryGetJavaProject(project);
+        if (javaProjectOpt.isPresent()) {
+            IJavaProject javaProject = javaProjectOpt.get();
+            List<IAdaptable> elements = new ArrayList<>();
+            elements.addAll(Arrays.asList(workingSet.getElements()));
+            boolean removed = elements.remove(javaProject);
+            if (removed) {
+                workingSet.setElements(elements.toArray(new IAdaptable[elements.size()]));
+            }
+            return removed;
+        }
 
-	@WrapToScript
-	public Optional<IJavaProject> tryGetJavaProject(IProject project) throws CoreException {
-		if (project.exists() && project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
-			IProjectNature projectNature = project.getNature(JavaCore.NATURE_ID);
-			if (projectNature instanceof IJavaProject) {
-				IJavaProject javaProject = (IJavaProject) projectNature;
-				return Optional.of(javaProject);
-			}
-		}
-		return Optional.empty();
-	}
+        return false;
+    }
 
-	@WrapToScript
-	public void clearWorkingSet(IWorkingSet workingSet) {
-		workingSet.setElements(new IAdaptable[0]);
-	}
+    @WrapToScript
+    public Optional<IJavaProject> tryGetJavaProject(final IProject project) throws CoreException {
+        if (project.exists() && project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
+            IProjectNature projectNature = project.getNature(JavaCore.NATURE_ID);
+            if (projectNature instanceof IJavaProject) {
+                IJavaProject javaProject = (IJavaProject) projectNature;
+                return Optional.of(javaProject);
+            }
+        }
+        return Optional.empty();
+    }
 
-	protected void saveVMs(List<VMStandin> standins, VMStandin defaultStandin) throws CoreException {
+    @WrapToScript
+    public void clearWorkingSet(final IWorkingSet workingSet) {
+        workingSet.setElements(new IAdaptable[0]);
+    }
 
-		VMDefinitionsContainer vmContainer = new VMDefinitionsContainer();
-		String defaultVMId = JavaRuntime.getCompositeIdFromVM(defaultStandin);
-		vmContainer.setDefaultVMInstallCompositeID(defaultVMId);
+    protected void saveVMs(final List<VMStandin> standins, final VMStandin defaultStandin) throws CoreException {
 
-		for (int i = 0; i < standins.size(); i++) {
-			vmContainer.addVM(standins.get(i));
-		}
+        VMDefinitionsContainer vmContainer = new VMDefinitionsContainer();
+        String defaultVMId = JavaRuntime.getCompositeIdFromVM(defaultStandin);
+        vmContainer.setDefaultVMInstallCompositeID(defaultVMId);
 
-		String vmDefXML = vmContainer.getAsXML();
-		IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
-		if (prefs != null) {
-			prefs.put(JavaRuntime.PREF_VM_XML, vmDefXML);
-		}
-		JavaRuntime.savePreferences();
-	}
+        for (int i = 0; i < standins.size(); i++) {
+            vmContainer.addVM(standins.get(i));
+        }
 
-	protected VMStandin toVMStandin(File installationLocation) {
+        String vmDefXML = vmContainer.getAsXML();
+        IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(LaunchingPlugin.ID_PLUGIN);
+        if (prefs != null) {
+            prefs.put(JavaRuntime.PREF_VM_XML, vmDefXML);
+        }
+        JavaRuntime.savePreferences();
+    }
 
-		StandardVMType type = new StandardVMType() {
-			@Override
-			public String getId() {
-				return "org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType";
-			}
-		};
-		String uniqueId = createUniqueId(type);
+    protected VMStandin toVMStandin(final File installationLocation) {
 
-		VMStandin vmStandin = new VMStandin(type, uniqueId);
-		String vmName = installationLocation.getName();
-		int index = vmName.lastIndexOf(".ee");
-		if (index > 0) {
-			vmName = vmName.substring(0, index);
-		}
-		vmStandin.setName(vmName);
-		vmStandin.setInstallLocation(installationLocation);
-		vmStandin.setLibraryLocations(null);
+        StandardVMType type = new StandardVMType() {
 
-		return vmStandin;
-	}
+            @Override
+            public String getId() {
+                return "org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType";
+            }
+        };
+        String uniqueId = createUniqueId(type);
 
-	protected String createUniqueId(StandardVMType type) {
-		String id = null;
-		do {
-			id = String.valueOf(System.currentTimeMillis());
-		} while (type.findVMInstall(id) != null);
-		return id;
-	}
+        VMStandin vmStandin = new VMStandin(type, uniqueId);
+        String vmName = installationLocation.getName();
+        int index = vmName.lastIndexOf(".ee");
+        if (index > 0) {
+            vmName = vmName.substring(0, index);
+        }
+        vmStandin.setName(vmName);
+        vmStandin.setInstallLocation(installationLocation);
+        vmStandin.setLibraryLocations(null);
 
-	protected void importJdtProfiles(File file, ProfileSetup profileSetup) throws CoreException {
+        return vmStandin;
+    }
 
-		IProfileVersioner profileVersioner = profileSetup.newProfileVersioner();
+    protected String createUniqueId(final StandardVMType type) {
+        String id = null;
+        do {
+            id = String.valueOf(System.currentTimeMillis());
+        } while (type.findVMInstall(id) != null);
+        return id;
+    }
 
-		ProfileStore profileStore = profileSetup.newProfileStore(profileVersioner);
-		List<Profile> profiles = profileStore.readProfiles(InstanceScope.INSTANCE);
-		if (profiles == null) {
-			profiles = new ArrayList<>();
-		}
+    protected void importJdtProfiles(final File file, final ProfileSetup profileSetup) throws CoreException {
 
-		ProfileManager profileManager = profileSetup.newProfileManager(profiles, InstanceScope.INSTANCE,
-				PreferencesAccess.getOriginalPreferences(), profileVersioner);
-		List<Profile> newProfiles = profileStore.readProfilesFromFile(file);
-		for (Profile newProfile : newProfiles) {
-			CustomProfile newCustomProfile = (CustomProfile) newProfile;
-			profileVersioner.update(newCustomProfile);
-			profileManager.addProfile(newCustomProfile);
-		}
+        IProfileVersioner profileVersioner = profileSetup.newProfileVersioner();
 
-		profileStore.writeProfiles(profileManager.getSortedProfiles(), InstanceScope.INSTANCE);
-		profileManager.commitChanges(InstanceScope.INSTANCE);
-	}
+        ProfileStore profileStore = profileSetup.newProfileStore(profileVersioner);
+        List<Profile> profiles = profileStore.readProfiles(InstanceScope.INSTANCE);
+        if (profiles == null) {
+            profiles = new ArrayList<>();
+        }
+
+        ProfileManager profileManager = profileSetup.newProfileManager(profiles, InstanceScope.INSTANCE,
+                PreferencesAccess.getOriginalPreferences(), profileVersioner);
+        List<Profile> newProfiles = profileStore.readProfilesFromFile(file);
+        for (Profile newProfile : newProfiles) {
+            CustomProfile newCustomProfile = (CustomProfile) newProfile;
+            profileVersioner.update(newCustomProfile);
+            profileManager.addProfile(newCustomProfile);
+        }
+
+        profileStore.writeProfiles(profileManager.getSortedProfiles(), InstanceScope.INSTANCE);
+        profileManager.commitChanges(InstanceScope.INSTANCE);
+    }
 
 }
