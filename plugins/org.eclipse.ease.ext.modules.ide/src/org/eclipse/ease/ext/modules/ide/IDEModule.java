@@ -132,6 +132,13 @@ public class IDEModule extends AbstractScriptModule {
     }
 
     @WrapToScript
+    public Optional<Job> linkImportProject(final String projectName, final Object resourceObj) throws FileNotFoundException, CoreException {
+        Optional<Job> initLinkImportProjectJobOpt = tryInitLinkImportProjectJob(projectName, resourceObj);
+        initLinkImportProjectJobOpt.ifPresent(job -> job.schedule());
+        return initLinkImportProjectJobOpt;
+    }
+
+    @WrapToScript
     public Optional<Job> tryInitLinkImportProjectJob(final String projectName, final Object resourceObj)
             throws CoreException, FileNotFoundException {
 
