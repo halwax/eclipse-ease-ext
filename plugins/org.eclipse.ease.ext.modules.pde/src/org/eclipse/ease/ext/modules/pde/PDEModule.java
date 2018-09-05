@@ -20,48 +20,56 @@ import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 
 public class PDEModule extends AbstractScriptModule {
-	
-	private IDEModule ideModule = new IDEModule();
-	
-	@Override
-	public void initialize(IScriptEngine engine, IEnvironment environment) {
-		super.initialize(engine, environment);
-		ideModule.initialize(engine, environment);
-	}
-	
-	@WrapToScript
-	public Optional<Job> tryInitLoadDefaultTargetPlatformJob(final Object resourceObj) {
-		
-		IResource resource = ideModule.toResource(resourceObj);
-		
-		if(resource instanceof IFile) {
-			IFile file = (IFile) resource;
-			
-			Optional<ITargetPlatformService> targetPlatformServiceOpt = ideModule.tryLoadService(ITargetPlatformService.class);
-			if(targetPlatformServiceOpt.isPresent()) {
-				ITargetPlatformService targetPlatformService = targetPlatformServiceOpt.get();
-				
-				WorkspaceJob job = new WorkspaceJob("Set target " + file.getName()) {
-					
-					@Override
-					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-						
-						ITargetHandle targetHandle = targetPlatformService.getTarget(file);
-						ITargetDefinition targetDefinition = targetHandle.getTargetDefinition();						
-						IStatus status = targetDefinition.resolve(monitor);
-						
-						LoadTargetDefinitionJob.load(targetDefinition);
-						
-						return status;
-					}
-				};
-				
-				return Optional.of(job);
-				
-			}			
-		}
-		
-		return Optional.empty();
-	}
+
+    private final IDEModule ideModule = new IDEModule();
+
+    @Override
+    public void initialize(final IScriptEngine engine, final IEnvironment environment) {
+        super.initialize(engine, environment);
+        ideModule.initialize(engine, environment);
+    }
+
+    @WrapToScript
+    public void loadDefaultTargetPlatform(final Object resourceObj) throws InterruptedException {
+        Job loadDefaultTargetPlatformJob = tryInitLoadDefaultTargetPlatformJob(resourceObj)
+                .orElseThrow(() -> new IllegalArgumentException("Can't load Targetplatform from " + resourceObj));
+        loadDefaultTargetPlatformJob.schedule();
+        loadDefaultTargetPlatformJob.join();
+    }
+
+    @WrapToScript
+    public Optional<Job> tryInitLoadDefaultTargetPlatformJob(final Object resourceObj) {
+
+        IResource resource = ideModule.toResource(resourceObj);
+
+        if (resource instanceof IFile) {
+            IFile file = (IFile) resource;
+
+            Optional<ITargetPlatformService> targetPlatformServiceOpt = ideModule.tryLoadService(ITargetPlatformService.class);
+            if (targetPlatformServiceOpt.isPresent()) {
+                ITargetPlatformService targetPlatformService = targetPlatformServiceOpt.get();
+
+                WorkspaceJob job = new WorkspaceJob("Set target " + file.getName()) {
+
+                    @Override
+                    public IStatus runInWorkspace(final IProgressMonitor monitor) throws CoreException {
+
+                        ITargetHandle targetHandle = targetPlatformService.getTarget(file);
+                        ITargetDefinition targetDefinition = targetHandle.getTargetDefinition();
+                        IStatus status = targetDefinition.resolve(monitor);
+
+                        LoadTargetDefinitionJob.load(targetDefinition);
+
+                        return status;
+                    }
+                };
+
+                return Optional.of(job);
+
+            }
+        }
+
+        return Optional.empty();
+    }
 
 }
