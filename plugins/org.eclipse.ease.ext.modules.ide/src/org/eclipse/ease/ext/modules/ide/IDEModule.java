@@ -89,7 +89,7 @@ public class IDEModule extends AbstractScriptModule {
         IWorkspaceDescription description = workspace.getDescription();
         boolean autoBuilding = description.isAutoBuilding();
         if (autoBuilding != enable) {
-            description.setAutoBuilding(autoBuilding);
+            description.setAutoBuilding(enable);
             workspace.setDescription(description);
         }
         return autoBuilding;
