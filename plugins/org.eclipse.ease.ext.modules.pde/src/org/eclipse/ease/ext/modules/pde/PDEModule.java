@@ -8,6 +8,7 @@ import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ease.IScriptEngine;
 import org.eclipse.ease.ext.modules.ide.IDEModule;
@@ -58,7 +59,14 @@ public class PDEModule extends AbstractScriptModule {
                         ITargetDefinition targetDefinition = targetHandle.getTargetDefinition();
                         IStatus status = targetDefinition.resolve(monitor);
 
-                        LoadTargetDefinitionJob.load(targetDefinition);
+                		Job job = new LoadTargetDefinitionJob(targetDefinition);
+                		job.setUser(true);
+                		job.schedule();
+                		try {
+							job.join();
+						} catch (InterruptedException e) {
+							throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.ease.ext.modules.pde", IStatus.ERROR, e.getMessage(), e));
+						}
 
                         return status;
                     }
