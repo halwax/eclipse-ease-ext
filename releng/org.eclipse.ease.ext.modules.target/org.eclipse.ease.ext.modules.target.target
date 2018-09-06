@@ -28,6 +28,7 @@
 		<unit id="org.eclipse.m2e.sdk.feature.feature.group" version="1.9.0.20180606-2036"/>
 		<unit id="org.eclipse.wst.jsdt.feature.feature.group" version="2.1.1.v201804042202"/>
 		<repository location="http://download.eclipse.org/releases/photon"/>
+		<unit id="org.eclipse.egit.feature.group" version="5.0.0.201806131550-r"/>
 	</location>
 </locations>
 </target>
