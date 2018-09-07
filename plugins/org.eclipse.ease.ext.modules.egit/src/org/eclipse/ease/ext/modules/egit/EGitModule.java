@@ -15,7 +15,6 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 public class EGitModule extends AbstractScriptModule {
 
-    @SuppressWarnings("restriction")
     @WrapToScript
     public File cloneRemoteRepository(final String remoteRepositoryLocation, final String localGitRepositoryPath,
             @ScriptParameter(defaultValue = ScriptParameter.NULL)
@@ -41,7 +40,7 @@ public class EGitModule extends AbstractScriptModule {
 
             final Git result = cloneCommand.call();
             File localGitRepositoryFile = result.getRepository().getDirectory();
-            org.eclipse.egit.core.Activator.getDefault().getRepositoryUtil().addConfiguredRepository(localGitRepositoryFile);
+            addToRepositoryConfiguration(localGitRepositoryFile);
 
             return localGitRepositoryFile;
 
@@ -50,5 +49,11 @@ public class EGitModule extends AbstractScriptModule {
         }
 
     }
+
+    @WrapToScript
+    @SuppressWarnings("restriction")
+	public void addToRepositoryConfiguration(File localGitRepositoryFile) {
+		org.eclipse.egit.core.Activator.getDefault().getRepositoryUtil().addConfiguredRepository(localGitRepositoryFile);
+	}
 
 }
