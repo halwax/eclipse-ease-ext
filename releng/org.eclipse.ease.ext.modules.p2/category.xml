@@ -9,10 +9,10 @@
    <feature url="features/org.eclipse.ease.ext.modules.pde.feature_0.0.1.qualifier.jar" id="org.eclipse.ease.ext.modules.pde.feature" version="0.0.1.qualifier">
       <category name="EASE Extension Modules"/>
    </feature>
-   <feature url="features/org.eclipse.ease.ext.modules.subclipse.feature_0.0.1.qualifier.jar" id="org.eclipse.ease.ext.modules.subclipse.feature" version="0.0.1.qualifier">
+   <feature url="features/org.eclipse.ease.ext.modules.egit.feature_0.0.1.qualifier.jar" id="org.eclipse.ease.ext.modules.egit.feature" version="0.0.1.qualifier">
       <category name="EASE Extension Modules"/>
    </feature>
-   <feature url="features/org.eclipse.ease.ext.modules.egit.feature_0.0.1.qualifier.jar" id="org.eclipse.ease.ext.modules.egit.feature" version="0.0.1.qualifier">
+   <feature url="features/org.eclipse.ease.ext.modules.refactoring.feature_0.0.1.qualifier.jar" id="org.eclipse.ease.ext.modules.refactoring.feature" version="0.0.1.qualifier">
       <category name="EASE Extension Modules"/>
    </feature>
    <category-def name="EASE Extension Modules" label="EASE Extensions"/>

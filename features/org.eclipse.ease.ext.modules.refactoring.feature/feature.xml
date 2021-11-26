@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.eclipse.ease.ext.modules.subclipse.feature"
-      label="EASE Extension Subclipse Feature"
+      id="org.eclipse.ease.ext.modules.refactoring.feature"
+      label="EASE Extension Refactoring Feature"
       version="0.0.1.qualifier">
 
    <description url="http://www.example.com/description">
@@ -17,7 +17,7 @@
    </license>
 
    <plugin
-         id="org.eclipse.ease.ext.modules.subclipse"
+         id="org.eclipse.ease.ext.modules.refactoring"
          download-size="0"
          install-size="0"
          version="0.0.0"

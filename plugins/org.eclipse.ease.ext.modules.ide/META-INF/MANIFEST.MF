@@ -8,5 +8,6 @@ Require-Bundle: org.eclipse.ease;visibility:=reexport,
  org.eclipse.core.resources;visibility:=reexport,
  org.eclipse.ui.workbench;visibility:=reexport,
  org.eclipse.ui.ide;visibility:=reexport,
- org.eclipse.ease.modules.platform;visibility:=reexport
+ org.eclipse.ease.modules.platform;visibility:=reexport,
+ org.apache.commons.io
 Export-Package: org.eclipse.ease.ext.modules.ide

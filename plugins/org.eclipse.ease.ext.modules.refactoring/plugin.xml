@@ -5,9 +5,9 @@
          point="org.eclipse.ease.modules">
       <module
             category="org.eclipse.ease.category.system"
-            class="org.eclipse.ease.ext.modules.subclipse.SubclipseModule"
-            id="org.eclipse.ease.ext.modules.subclipse"
-            name="Subclipse"
+            class="org.eclipse.ease.ext.modules.refactoring.RefactoringModule"
+            id="org.eclipse.ease.ext.modules.refactoring"
+            name="Refactoring"
             visible="true">
       </module>
    </extension>

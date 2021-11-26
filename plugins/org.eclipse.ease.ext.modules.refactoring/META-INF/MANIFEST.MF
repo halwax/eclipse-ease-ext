@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Ease Refactoring Modules
+Bundle-SymbolicName: org.eclipse.ease.ext.modules.refactoring;singleton:=true
+Bundle-Version: 0.0.1.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.ease.ext.modules.ide;visibility:=reexport,
+ org.eclipse.jdt.core;visibility:=reexport,
+ org.eclipse.jdt.launching;visibility:=reexport,
+ org.eclipse.jdt.ui;visibility:=reexport,
+ org.eclipse.ltk.core.refactoring,
+ org.eclipse.ltk.ui.refactoring,
+ org.eclipse.jface.text,
+ org.apache.commons.io,
+ org.eclipse.jdt.core.manipulation,
+ org.eclipse.ease.ext.modules.jdt,
+ org.eclipse.ui.workbench.texteditor
+Export-Package: org.eclipse.ease.ext.modules.refactoring

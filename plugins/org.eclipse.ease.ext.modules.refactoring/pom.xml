@@ -2,9 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>org.eclipse.ease.ext.modules.subclipse.feature</artifactId>
-	<packaging>eclipse-feature</packaging>
-	<name>EASE Subclipse Extension Modules Feature</name>
+	<artifactId>org.eclipse.ease.ext.modules.refactoring</artifactId>
+	<packaging>eclipse-plugin</packaging>
+	<name>EASE Refactoring Extension Modules</name>
 
 	<parent>
 		<version>0.0.1-SNAPSHOT</version>

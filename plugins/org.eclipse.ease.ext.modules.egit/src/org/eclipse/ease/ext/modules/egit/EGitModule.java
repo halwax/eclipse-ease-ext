@@ -6,6 +6,7 @@ import org.eclipse.ease.modules.AbstractScriptModule;
 import org.eclipse.ease.modules.ScriptParameter;
 import org.eclipse.ease.modules.WrapToScript;
 import org.eclipse.ease.tools.ResourceTools;
+import org.eclipse.egit.core.RepositoryUtil;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -53,7 +54,7 @@ public class EGitModule extends AbstractScriptModule {
     @WrapToScript
     @SuppressWarnings("restriction")
 	public void addToRepositoryConfiguration(File localGitRepositoryFile) {
-		org.eclipse.egit.core.Activator.getDefault().getRepositoryUtil().addConfiguredRepository(localGitRepositoryFile);
+    	RepositoryUtil.INSTANCE.addConfiguredRepository(localGitRepositoryFile);
 	}
 
 }

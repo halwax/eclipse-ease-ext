@@ -1,18 +1,17 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="Photon" sequenceNumber="1478770242">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?>
+<target name="Eclipse" sequenceNumber="1478770242">
 <locations>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.ease.feature.feature.group" version="0.6.0.I201802271533"/>
-<unit id="org.eclipse.ease.lang.javascript.feature.feature.group" version="0.6.0.I201802201511"/>
-<unit id="org.eclipse.ease.modules.feature.feature.group" version="0.6.0.I201802191612"/>
-<unit id="org.eclipse.ease.modules.feature.source.feature.group" version="0.6.0.I201802191612"/>
-<unit id="org.eclipse.ease.ui.feature.feature.group" version="0.6.0.I201804241621"/>
-<repository location="http://download.eclipse.org/ease/update/release"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.tigris.subversion.subclipse.feature.group" version="4.2.4.201804261743"/>
-<repository location="https://dl.bintray.com/subclipse/releases/subclipse/4.2.x/"/>
-</location>
 	<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+		<repository location="http://download.eclipse.org/ease/release/latest"/>
+		<unit id="org.eclipse.ease.feature.feature.group" version="0.8.0.I202105061131"/>
+		<unit id="org.eclipse.ease.lang.javascript.feature.feature.group" version="0.8.0.I202104091054"/>
+		<unit id="org.eclipse.ease.modules.feature.feature.group" version="0.8.0.I202105111149"/>
+		<unit id="org.eclipse.ease.modules.feature.source.feature.group" version="0.8.0.I202105111149"/>
+		<unit id="org.eclipse.ease.ui.feature.feature.group" version="0.8.0.I202105111204"/>
+	</location>
+	<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
+		<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository"/>
 		<unit id="com.fasterxml.jackson.core.jackson-annotations" version="2.9.2.v20180207-1730"/>
 		<unit id="com.fasterxml.jackson.core.jackson-annotations.source" version="2.9.2.v20180207-1730"/>
 		<unit id="com.fasterxml.jackson.core.jackson-core" version="2.9.2.v20180207-1730"/>
@@ -21,14 +20,13 @@
 		<unit id="com.fasterxml.jackson.core.jackson-databind.source" version="2.9.2.v20180207-1730"/>
 		<unit id="com.fasterxml.jackson.jaxrs.jackson-jaxrs-json-provider" version="2.9.2.v20180207-1730"/>
 		<unit id="org.hamcrest.core" version="1.3.0.v20180420-1519"/>
-		<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository"/>
 	</location>
 	<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-		<unit id="org.eclipse.m2e.feature.feature.group" version="1.9.0.20180606-2036"/>
-		<unit id="org.eclipse.m2e.sdk.feature.feature.group" version="1.9.0.20180606-2036"/>
-		<unit id="org.eclipse.wst.jsdt.feature.feature.group" version="2.1.1.v201804042202"/>
-		<repository location="http://download.eclipse.org/releases/photon"/>
-		<unit id="org.eclipse.egit.feature.group" version="5.0.0.201806131550-r"/>
+		<repository location="https://download.eclipse.org/releases/2021-09/"/>
+		<unit id="org.eclipse.m2e.feature.feature.group" version="1.18.1.20210618-2246"/>
+		<unit id="org.eclipse.egit.feature.group" version="5.13.0.202109080827-r"/>
+		<unit id="org.eclipse.m2e.sdk.feature.feature.group" version="1.18.1.20210618-1338"/>
+		<unit id="org.eclipse.wst.jsdt.feature.feature.group" version="2.3.600.v202108041610"/>
 	</location>
 </locations>
 </target>

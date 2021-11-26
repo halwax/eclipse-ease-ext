@@ -15,7 +15,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>0.26.0</tycho-version>
+		<tycho-version>2.5.0</tycho-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -26,15 +26,15 @@
 		<module>plugins/org.eclipse.ease.ext.modules.commons</module>
 		<module>plugins/org.eclipse.ease.ext.modules.ide</module>
 		<module>plugins/org.eclipse.ease.ext.modules.jdt</module>
+		<module>plugins/org.eclipse.ease.ext.modules.refactoring</module>
 		<module>plugins/org.eclipse.ease.ext.modules.pde</module>
-		<module>plugins/org.eclipse.ease.ext.modules.subclipse</module>
 		<module>plugins/org.eclipse.ease.ext.modules.egit</module>
 		<module>plugins/org.eclipse.ease.ext.modules.team</module>
 		
 		<module>features/org.eclipse.ease.ext.modules.ide.feature</module>
 		<module>features/org.eclipse.ease.ext.modules.jdt.feature</module>
+		<module>features/org.eclipse.ease.ext.modules.refactoring.feature</module>
 		<module>features/org.eclipse.ease.ext.modules.pde.feature</module>
-		<module>features/org.eclipse.ease.ext.modules.subclipse.feature</module>
 		<module>features/org.eclipse.ease.ext.modules.egit.feature</module>
 		
 		<module>releng/org.eclipse.ease.ext.modules.p2</module>
