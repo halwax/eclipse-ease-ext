@@ -59,7 +59,15 @@ public class RefactoringModule extends AbstractScriptModule {
 	}
 
 	private CompilationUnit toAstCompilationUnit(ICompilationUnit iCompilationUnit, IProgressMonitor monitor) {
-		ASTParser astParser = ASTParser.newParser(AST.getJLSLatest());
+
+		int jslVersion = -1;
+		try {
+			jslVersion = AST.getJLSLatest();
+		} catch (NoSuchMethodError e) {
+			jslVersion = AST.JLS11;
+		}
+
+		ASTParser astParser = ASTParser.newParser(jslVersion);
 		astParser.setKind(ASTParser.K_COMPILATION_UNIT);
 		astParser.setResolveBindings(true);
 		astParser.setSource(iCompilationUnit);
