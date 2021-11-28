@@ -5,9 +5,16 @@
          point="org.eclipse.ease.modules">
       <module
             category="org.eclipse.ease.category.system"
-            class="org.eclipse.ease.ext.modules.refactoring.RefactoringModule"
+            class="org.eclipse.ease.ext.modules.refactoring.jdt.RefactoringJdtModule"
             id="org.eclipse.ease.ext.modules.refactoring"
-            name="Refactoring"
+            name="RefactoringJdt"
+            visible="true">
+      </module>
+       <module
+            category="org.eclipse.ease.category.system"
+            class="org.eclipse.ease.ext.modules.refactoring.poet.RefactoringPoetModule"
+            id="org.eclipse.ease.ext.modules.refactoring.javapoet"
+            name="RefactoringPoet"
             visible="true">
       </module>
    </extension>

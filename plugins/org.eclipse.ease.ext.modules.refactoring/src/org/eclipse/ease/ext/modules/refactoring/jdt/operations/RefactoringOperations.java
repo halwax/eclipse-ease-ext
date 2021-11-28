@@ -1,4 +1,4 @@
-package org.eclipse.ease.ext.modules.refactoring.operations;
+package org.eclipse.ease.ext.modules.refactoring.jdt.operations;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
